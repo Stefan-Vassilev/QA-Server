@@ -13,5 +13,14 @@ import java.util.UUID;
 
 
 public class PostManager {
+    public String test(){
+        File temp = new File("src/main/resources/postJSON");
+        JSONObject testJSON = new JSONObject();
+        testJSON.put("ID", UUID.randomUUID());
+        testJSON.put("question","question 1");
+        ArrayList<JSONObject> jsonArrayList = new ArrayList<JSONObject>();
+        testJSON.put("answers", jsonArrayList);
 
+        return testJSON.toString();
+    }
 }
