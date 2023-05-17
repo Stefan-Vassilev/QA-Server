@@ -21,6 +21,7 @@ public class QAserverApplication {
 	@GetMapping("/")
 	public String getListable(){
 		man.setupTest();
+		System.out.println(man.listablePost(0));
 		return "test";
 	}
 	@GetMapping("/next")

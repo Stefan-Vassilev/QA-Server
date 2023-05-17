@@ -1,6 +1,9 @@
 package com.project.QAserver;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 
 import java.io.*;
@@ -9,6 +12,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 
 import java.util.Arrays;
+import java.util.Scanner;
 import java.util.UUID;
 /*
 Format for JSON:
@@ -19,10 +23,42 @@ Format for JSON:
 
 public class PostManager {
 
-    public void listablePost(int page){
+    public String listablePost(int page){
 
+        File dir = new File("src/main/resources/postJSON/");
+        File[] directoryListing = dir.listFiles();
+
+        JSONArray jsonArray = new JSONArray();
+
+        //JSONParser jsonParse = new JSONParser();
+        for (int i = 0; i < 5; i++) {
+            if(i!=0) {
+                try {
+                    assert directoryListing != null;
+                    Scanner reader = new Scanner(directoryListing[i]);
+                    String str = "";
+                    while(reader.hasNextLine()) {
+                        String temp = reader.nextLine();
+                        str = str + temp;
+                    }
+                    JSONObject obj = new JSONObject(str);
+                    jsonArray.put(obj);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+        return jsonArray.toString();
     }
-    public void addPost(){
+    public void addPost(String question, String description){
+        JSONObject tempPostJson = new JSONObject();
+        //JSONObject[] nullAnswersJson = new JSONObject[];
+        tempPostJson.put("question", question);
+        tempPostJson.put("description",description);
+        //tempPostJson.put("answers")
+
 
     }
 
@@ -33,7 +69,7 @@ public class PostManager {
 //  USE THE FOLLOWING CODE TO CREATE TEST QUESTIONS
     public void setupTest(){
         JSONObject testObject = new JSONObject();
-        JSONObject[] answers = new JSONObject[4];
+        JSONObject[] answers = new JSONObject[0];
         String id;
         FileWriter writer = null;
         for (int i = 0; i < 10; i++) {
@@ -43,7 +79,6 @@ public class PostManager {
 
                 file.createNewFile();
             } catch (IOException e) {
-                System.out.println("Error occured: " + e);
                 throw new RuntimeException(e);
             }
             testObject.put("id", id);
