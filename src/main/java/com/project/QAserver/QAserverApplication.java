@@ -20,8 +20,7 @@ public class QAserverApplication {
 	}
 	@GetMapping("/")
 	public String getListable(){
-		man.setupTest();
-		System.out.println(man.listablePost(0));
+		man.addAnswer("0ffab7fd-5ece-49ea-9f59-e0955cdebfad","mlem username","mlem answer 1", "mlem description 1");
 		return "test";
 	}
 	@GetMapping("/next")

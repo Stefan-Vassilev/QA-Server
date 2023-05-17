@@ -52,21 +52,50 @@ public class PostManager {
         }
         return jsonArray.toString();
     }
-    public void addPost(String question, String description){
+    public void viewPost(){
+
+    }
+    public String addPost(String question, String description){
         JSONObject tempPostJson = new JSONObject();
-        //JSONObject[] nullAnswersJson = new JSONObject[];
+        JSONObject[] nullAnswersJson = new JSONObject[0];
         tempPostJson.put("question", question);
         tempPostJson.put("description",description);
+        tempPostJson.put("answers",nullAnswersJson);
+        System.out.println(tempPostJson);
+
+        return tempPostJson.toString();
+
         //tempPostJson.put("answers")
 
 
     }
 
-    public void addAnswer(){
-
+    public void addAnswer(String questionID, String username, String answer, String description){
+        //Scanner reader = new Scanner("src/main/resources/postJSON/" + questionID + ".json");
+        File file = new File("src/main/resources/postJSON/0ffab7fd-5ece-49ea-9f59-e0955cdebfad.json");
+        Scanner reader = null;
+        try {
+            reader = new Scanner(file);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        String str = "";
+        while (reader.hasNextLine()){
+            String temp = reader.nextLine();
+            str = str + temp;
+        }
+        JSONObject tempJson = new JSONObject(str);
+        JSONArray previousList = new JSONArray(tempJson.get("answers").toString());
+        JSONObject newAnswerJson = new JSONObject();
+        newAnswerJson.put("username", username);
+        newAnswerJson.put("answer", answer);
+        newAnswerJson.put("description", description);
+        previousList.put(newAnswerJson);
+        tempJson.put("answers", previousList);
+        System.out.println(tempJson);
     }
 
-//  USE THE FOLLOWING CODE TO CREATE TEST QUESTIONS
+//  USE THE FOLLOWING CODE TO CREATE TEST JSON FILES WITH THE PROPER FORMAT
     public void setupTest(){
         JSONObject testObject = new JSONObject();
         JSONObject[] answers = new JSONObject[0];
