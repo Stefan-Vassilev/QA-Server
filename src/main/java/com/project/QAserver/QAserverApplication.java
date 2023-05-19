@@ -15,29 +15,40 @@ import org.springframework.web.bind.annotation.RestController;
 public class QAserverApplication {
 
 	PostManager man = new PostManager();
+	int page = 1;
 	public static void main(String[] args) {
 		SpringApplication.run(QAserverApplication.class, args);
 	}
 	@GetMapping("/")
 	public String getListable(){
-		man.addAnswer("0ffab7fd-5ece-49ea-9f59-e0955cdebfad","mlem username","mlem answer 1", "mlem description 1");
-		return "test";
+
+		return man.listablePost(page);
 	}
 	@GetMapping("/next")
 	public String next(){
-		return "next";
+		page = page + 1;
+		return man.listablePost(page);
 	}
 	@GetMapping("/previous")
 	public String previous(){
-		return "previous";
+		if(page > 1){
+			page = page - 1;
+			return man.listablePost(page);
+		} else{
+			return man.listablePost(1);
+		}
 	}
 	@GetMapping("/post/{id}")
 	public String viewPost(@PathVariable(value="id") String postID){
-		return "view post";
+		return man.viewPost(postID);
 	}
-	@GetMapping("/{postid}/{answer}/{description}/{username}")
+	@GetMapping("/post/{postid}/{answer}/{description}/{username}")
 	public void addAnswer(@PathVariable(value="postid") String postID, @PathVariable(value = "answer") String answer, @PathVariable(value = "description") String description, @PathVariable(value = "username") String username){
-
+		man.addAnswer(postID,username,answer,description);
+	}
+	@GetMapping("/post/create/{question}/{description}")
+	public void addPost(@PathVariable(value="question") String question, @PathVariable(value = "description") String description){
+		man.addPost(question,description);
 	}
 
 

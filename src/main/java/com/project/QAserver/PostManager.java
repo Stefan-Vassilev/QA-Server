@@ -30,38 +30,87 @@ public class PostManager {
 
         JSONArray jsonArray = new JSONArray();
 
+        int firstPostIndex = (page - 1) * 5;
+        int lastPostIndex = firstPostIndex + 4;
+        Scanner reader = null;
         //JSONParser jsonParse = new JSONParser();
-        for (int i = 0; i < 5; i++) {
-            if(i!=0) {
+//        for (int i = firstPostIndex; i < lastPostIndex; i++) {
+        String str = "";
+        for(int i = 0; i < 5; i++){
+
                 try {
                     assert directoryListing != null;
-                    Scanner reader = new Scanner(directoryListing[i]);
-                    String str = "";
+                    reader = new Scanner(directoryListing[i]);
+
                     while(reader.hasNextLine()) {
                         String temp = reader.nextLine();
+                        System.out.println("Temp: " + temp);
                         str = str + temp;
                     }
+                    reader.close();
+                    System.out.println("Str:" + str);
                     JSONObject obj = new JSONObject(str);
                     jsonArray.put(obj);
 
                 } catch (IOException e) {
+                    System.out.println("ERROR OCCUREDDDDDDDDDDDDD");
                     e.printStackTrace();
                 }
 
-            }
+
         }
+
         return jsonArray.toString();
     }
-    public void viewPost(){
+    public String viewPost(String questionID) {
+        File file = new File("src/main/resources/postJSON/" + questionID + ".json");
+        Scanner reader;
+        try {
+            reader = new Scanner(file);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        String str = "";
+        while (reader.hasNextLine()) {
+            String temp = reader.nextLine();
+            str = str + temp;
+        }
+        JSONObject tempJson = new JSONObject(str);
+        return tempJson.toString();
+
 
     }
     public String addPost(String question, String description){
         JSONObject tempPostJson = new JSONObject();
         JSONObject[] nullAnswersJson = new JSONObject[0];
+        String id;
+        id = UUID.randomUUID().toString();
+        tempPostJson.put("id", id);
         tempPostJson.put("question", question);
         tempPostJson.put("description",description);
         tempPostJson.put("answers",nullAnswersJson);
-        System.out.println(tempPostJson);
+
+
+        File file = new File("src/main/resources/postJSON/" + id + ".json");
+        try {
+
+            file.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        FileWriter writer;
+        try {
+            writer = new FileWriter(file);
+            writer.write(tempPostJson.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return tempPostJson.toString();
 
@@ -72,7 +121,7 @@ public class PostManager {
 
     public void addAnswer(String questionID, String username, String answer, String description){
         //Scanner reader = new Scanner("src/main/resources/postJSON/" + questionID + ".json");
-        File file = new File("src/main/resources/postJSON/0ffab7fd-5ece-49ea-9f59-e0955cdebfad.json");
+        File file = new File("src/main/resources/postJSON/" + questionID + ".json");
         Scanner reader = null;
         try {
             reader = new Scanner(file);
@@ -92,6 +141,20 @@ public class PostManager {
         newAnswerJson.put("description", description);
         previousList.put(newAnswerJson);
         tempJson.put("answers", previousList);
+
+        FileWriter writer;
+        try {
+            writer = new FileWriter(file);
+            writer.write(tempJson.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         System.out.println(tempJson);
     }
 
