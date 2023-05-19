@@ -21,7 +21,6 @@ public class QAserverApplication {
 	}
 	@GetMapping("/")
 	public String getListable(){
-
 		return man.listablePost(page);
 	}
 	@GetMapping("/next")
@@ -38,6 +37,10 @@ public class QAserverApplication {
 			return man.listablePost(1);
 		}
 	}
+/*
+	todo:
+	Fix parameters: use ?id={id}&answer={answer}...
+*/
 	@GetMapping("/post/{id}")
 	public String viewPost(@PathVariable(value="id") String postID){
 		return man.viewPost(postID);

@@ -1,5 +1,6 @@
 package com.project.QAserver;
 
+import com.sun.source.tree.WhileLoopTree;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -7,6 +8,7 @@ import org.json.simple.parser.ParseException;
 
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -26,42 +28,59 @@ public class PostManager {
     public String listablePost(int page){
 
         File dir = new File("src/main/resources/postJSON/");
-        File[] directoryListing = dir.listFiles();
+        File[] directoryListing = dir.listFiles((di, name) -> !name.equals(".DS_Store"));
 
         JSONArray jsonArray = new JSONArray();
 
         int firstPostIndex = (page - 1) * 5;
-        int lastPostIndex = firstPostIndex + 4;
-        Scanner reader = null;
-        //JSONParser jsonParse = new JSONParser();
-//        for (int i = firstPostIndex; i < lastPostIndex; i++) {
-        String str = "";
-        for(int i = 0; i < 5; i++){
-
-                try {
-                    assert directoryListing != null;
-                    reader = new Scanner(directoryListing[i]);
-
-                    while(reader.hasNextLine()) {
-                        String temp = reader.nextLine();
-                        System.out.println("Temp: " + temp);
-                        str = str + temp;
-                    }
-                    reader.close();
-                    System.out.println("Str:" + str);
-                    JSONObject obj = new JSONObject(str);
-                    jsonArray.put(obj);
-
-                } catch (IOException e) {
-                    System.out.println("ERROR OCCUREDDDDDDDDDDDDD");
-                    e.printStackTrace();
-                }
-
-
+        assert directoryListing != null;
+        int lastPostIndex;
+        if (directoryListing.length < 5) {
+            lastPostIndex = directoryListing.length;
+        }else {
+            lastPostIndex = firstPostIndex + 4;
         }
+        BufferedReader reader;
+        //JSONParser jsonParse = new JSONParser();
+        JSONObject temp;
+        String line;
+        for (int i = firstPostIndex; i <= lastPostIndex; i++) {
+
+        //for(int i = 0; i < 5; i++){
+
+
+            try {
+                System.out.println("File " + i + " : " + directoryListing[i]);
+                reader = new BufferedReader(new InputStreamReader(new FileInputStream(directoryListing[i]), StandardCharsets.UTF_8));
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
+            try {
+                line = reader.readLine();
+                reader.close();
+                System.out.println("Line + " + i + " : " + line);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+//            while(reader.hasNextLine()) {
+//            String temp = reader.nextLine();
+            temp = new JSONObject(line);
+            jsonArray.put(temp);
+        }
+        System.out.println(jsonArray);
+
+//        System.out.println("Str + " + i + " : " + str);
+//        JSONObject obj = new JSONObject(str);
+//        jsonArray.put(obj);
+
+
 
         return jsonArray.toString();
-    }
+        }
+
+
+
     public String viewPost(String questionID) {
         File file = new File("src/main/resources/postJSON/" + questionID + ".json");
         Scanner reader;
@@ -161,7 +180,7 @@ public class PostManager {
 //  USE THE FOLLOWING CODE TO CREATE TEST JSON FILES WITH THE PROPER FORMAT
     public void setupTest(){
         JSONObject testObject = new JSONObject();
-        JSONObject[] answers = new JSONObject[0];
+        JSONObject[] answers = new JSONObject[5];
         String id;
         FileWriter writer = null;
         for (int i = 0; i < 10; i++) {
