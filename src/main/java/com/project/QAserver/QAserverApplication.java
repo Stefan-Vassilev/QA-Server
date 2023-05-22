@@ -37,7 +37,6 @@ public class QAserverApplication {
 	@GetMapping("/previous/{page}")
 	public String previous(@PathVariable(value="page")String page){
 		String temp;
-
 		try {
 			temp = man.listablePost(Integer.parseInt(page));
 		}catch (NullPointerException e){
