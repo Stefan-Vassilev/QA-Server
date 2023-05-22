@@ -19,9 +19,6 @@ public class QAserverApplication {
 	@GetMapping("/")
 	public String getListable(){
 
-//		setup test cases
-		man.setupTest();
-
 		return man.listablePost(page);
 	}
 	int lastViewablePostPage = 1;

@@ -168,7 +168,6 @@ public class PostManager {
                 tempAnswerObject.put("answer", "answer number " + n);
             }
             testObject.put("answers", answers);
-
             try {
                 writer = new FileWriter(file);
                 writer.write(testObject.toString());
